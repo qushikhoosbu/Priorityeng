@@ -1,0 +1,80 @@
+package com.tatsam.priorityeng.controller;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tatsam.priorityeng.model.UserInfo;
+import com.tatsam.priorityeng.model.UserInfoModel;
+import com.tatsam.priorityeng.model.UserPriority;
+import com.tatsam.priorityeng.model.UserPriorityModel;
+import com.tatsam.priorityeng.service.*;
+//import com.monitorjbl.json.JsonView;
+//import static com.monitorjbl.json.Match.match;
+@RestController
+public class UserInfoPriorityInfoController 
+{	
+	
+	@Autowired
+	private UserInfoService userInfoService;
+	
+	@Autowired
+	private UserPriorityService userPriorityService;
+	
+	@GetMapping("/listuserInfo")
+	 public List<UserInfoModel> getListUserInfo()
+	{
+		return userInfoService.findAllByOrderBy();
+	}
+
+    @GetMapping("/userInfo")
+	 public UserInfoModel getUserInfo(@RequestParam int id)
+	{
+		return userInfoService.findById(id);
+	}
+	
+	@GetMapping("/listofPriority")
+	 public List<UserPriorityModel> getListOfPriority(@RequestParam int id)
+	{
+			return userPriorityService.findById(id);
+	}
+
+
+    
+	@CrossOrigin(allowedHeaders = {"*"},methods ={RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH},origins = {"*"})
+	  @GetMapping("/monitor/nodelevel") 
+		public ResponseEntity<ArrayList<UserInfo>> getAllUserInfo(@RequestParam(value="Id" , required = false) Integer Id) 
+	{
+	  ArrayList<UserInfo> app1 =new ArrayList<>();
+	  
+	  List< UserInfoModel> userInfoModelList=userInfoService.findAllByOrderBy();
+	  
+	  for( UserInfoModel userInfoModelObject : userInfoModelList) 
+	  { 
+		  UserInfo UserInfoObject =new UserInfo();
+	  
+		  UserInfoObject.setId(userInfoModelObject.getId()); 
+		  List< UserPriorityModel> userPriorityList= userPriorityService.findById(userInfoModelObject.getId());
+	  
+	  for( UserPriorityModel UserPriorityModelObject : userPriorityList) 
+	  { 
+		  UserPriority userPriorityObject = new UserPriority(); 
+		  userPriorityObject.setPriorityId(UserPriorityModelObject.getId()));
+	  
+	  }
+	  
+	  }
+	  
+	  return new ResponseEntity<ArrayList<UserInfo>> (app1, HttpStatus.OK);
+	  
+	  }
+	 
+		     
+}

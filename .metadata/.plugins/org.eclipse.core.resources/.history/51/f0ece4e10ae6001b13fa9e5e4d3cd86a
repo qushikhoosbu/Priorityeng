@@ -1,0 +1,48 @@
+package com.tatsam.priorityeng.controller;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tatsam.priorityeng.model.UserInfoModel;
+import com.tatsam.priorityeng.model.UserPriority;
+import com.tatsam.priorityeng.service.*;
+//import com.monitorjbl.json.JsonView;
+//import static com.monitorjbl.json.Match.match;
+@RestController
+public class UserInfoPriorityInfoController 
+{	
+	
+	@Autowired
+	private UserInfoService UserInfoService;
+	
+	@Autowired
+	private UserPriorityService userPriorityService;
+	
+	@GetMapping("/listuserInfo")
+	 public List<UserInfoModel> getListUserInfo()
+	{
+		return UserInfoService.findAllByOrderBy();
+	}
+
+    @GetMapping("/userInfo")
+	 public UserInfoModel getUserInfo(@RequestParam int id)
+	{
+		return UserInfoService.findById(id);
+	}
+	
+	@GetMapping("/listofPriority")
+	 public List<UserPriority> getListOfPriority(@RequestParam int id)
+	{
+			return userPriorityService.findById(id);
+	}
+
+    @GetMapping("/listofuserPriority")
+	 public List<UserPriority> getListOfUserPriority()
+	{
+			return userPriorityService.findAllByOrderBy();
+	}
+		     
+}

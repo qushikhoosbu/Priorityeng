@@ -1,0 +1,13 @@
+package com.tatsam;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class PriorityengApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(PriorityengApplication.class, args);
+	}
+
+}

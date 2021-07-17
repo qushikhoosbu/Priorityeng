@@ -1,0 +1,136 @@
+package com.tatsam.priorityeng.controller;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid;
+import com.tatsam.priorityeng.model.UserInfo;
+import com.tatsam.priorityeng.model.UserInfoModel;
+import com.tatsam.priorityeng.model.UserPriority;
+import com.tatsam.priorityeng.model.UserPriorityModel;
+import com.tatsam.priorityeng.repository.UserInfoRepo;
+import com.tatsam.priorityeng.service.*;
+
+//import com.monitorjbl.json.JsonView;
+//import static com.monitorjbl.json.Match.match;
+
+@RestController
+public class UserInfoPriorityInfoController 
+{	
+	
+	@Autowired
+	private UserInfoService userInfoService;
+	
+	@Autowired
+	private UserPriorityService userPriorityService;
+	
+	@Autowired 
+	private UserInfoRepo userInfoRepo;
+	
+	@GetMapping("/listuserInfo")
+	 public List<UserInfoModel> getListUserInfo()
+	{
+		return userInfoService.findAllByOrderBy();
+	}
+
+    @GetMapping("/userInfo")
+	 public UserInfoModel getUserInfo(@RequestParam int id)
+	{
+		return userInfoService.findById(id);
+	}
+	
+	@GetMapping("/listofPriority")
+	 public List<UserPriorityModel> getListOfPriority(@RequestParam int id)
+	{
+			return userPriorityService.findById(id);
+	}
+
+
+    
+	@CrossOrigin(allowedHeaders = {"*"},methods ={RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH},origins = {"*"})
+	  @GetMapping("/user/priority") 
+		public ResponseEntity<ArrayList<UserInfo>> getAllUserInfo(@RequestParam(value="Id" , required = false) Integer Id) 
+	{
+	  ArrayList<UserInfo> app1 =new ArrayList<>();
+	  
+	  List< UserInfoModel> userInfoModelList=userInfoService.findAllByOrderBy();
+	  
+	  for( UserInfoModel userInfoModelObject : userInfoModelList) 
+	  { 
+		  UserInfo UserInfoObject =new UserInfo();
+	  
+		  UserInfoObject.setId(userInfoModelObject.getId());
+		  UserInfoObject.setUserName(userInfoModelObject.getUserName());
+		  List< UserPriorityModel> userPriorityList= userPriorityService.findById(userInfoModelObject.getId());
+	  
+		  ArrayList<UserPriority> UserPriorityObj =new ArrayList<>();
+	  for( UserPriorityModel UserPriorityModelObject : userPriorityList) 
+	  { 
+		  UserPriority userPriorityObject = new UserPriority(); 
+		  userPriorityObject.setPriorityId(UserPriorityModelObject.getId());
+		  userPriorityObject.setPriorityName(UserPriorityModelObject.getPriorityName());
+		  userPriorityObject.setPriorityRate(UserPriorityModelObject.getPriorityRate());
+		  userPriorityObject.setPriorityState(UserPriorityModelObject.getPriorityState()); 
+		  
+		  UserPriorityObj.add(userPriorityObject);
+	  }
+	  
+	  UserInfoObject.setUserPriority(UserPriorityObj);
+	  app1.add(UserInfoObject);
+	  }
+	  
+	  return new ResponseEntity<ArrayList<UserInfo>> (app1, HttpStatus.OK);
+	  
+	  }
+	
+	
+	@DeleteMapping("/userinfo")
+	public Map<String, Boolean> deleteUserInfo(@PathVariable(value = "Id") int Id)
+	{
+	 UserInfoModel userInfoModel = userInfoRepo.findById(Id);
+	 
+	 userInfoRepo.delete(userInfoModel);
+	 
+	 Map<String, Boolean> response = new HashMap<>();
+	 response.put("deleted", Boolean.TRUE);
+	 
+	 return response;
+	}
+	
+	
+	@PostMapping("/user")
+	public UserInfoModel createUser(@Valid @RequestBody UserInfoModel userInfoModel ,consumes =MediaType.APPLICATION_JSON_VALUE , headers =MediaType.APPLICATION_JSON_VALUE) 
+	{
+	 
+		return userInfoRepo.save(userInfoModel);
+	}
+	
+	
+	@PutMapping("/user/{id}")
+	public ResponseEntity<UserInfoModel> updateEmployee(@PathVariable(value = "id") int Id, @Valid @RequestBody UserInfo userInfodetails) 
+	{
+		UserInfoModel userInfoModel = userInfoRepo.findById(Id);
+	
+		userInfoModel.setId(userInfodetails.getId());
+		userInfoModel.setUserName(userInfodetails.getUserName());
+	 
+	 final UserInfoModel userInfoModell = userInfoRepo.save(userInfoModel);
+	 
+	 return ResponseEntity.ok(userInfoModell);
+	}
+	 		     
+}

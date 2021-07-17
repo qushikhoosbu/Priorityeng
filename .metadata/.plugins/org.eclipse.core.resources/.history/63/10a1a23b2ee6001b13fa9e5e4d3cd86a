@@ -1,0 +1,5 @@
+package com.tatsam.priorityeng;
+
+public class RESTAuthenticationFailureHandler {
+
+}

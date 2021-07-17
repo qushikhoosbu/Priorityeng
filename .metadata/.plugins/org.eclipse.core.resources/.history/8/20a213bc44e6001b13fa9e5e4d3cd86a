@@ -1,0 +1,28 @@
+import java.io.*;
+import java.util.Scanner;
+
+public class Assessment{
+	Public double FindX(Double A, Double B)
+    {
+        int start = 0;
+        int mid;
+        
+        double ans = 0.0;
+        
+        
+     
+        return (double)ans;
+    }
+ 
+    public static void main(String[] args)
+    {
+    	Scanner sc = new Scanner(System.in);
+        Double A   = sc.nextDouble();
+        Double B   = sc.nextDouble();
+        
+        Assessment ass = new Assessment();
+  
+        System.out.println("The calculated value is"+ ass.FindX(A,B));
+    }
+
+}
